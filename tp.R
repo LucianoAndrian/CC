@@ -191,6 +191,12 @@ for(i in 1:4){
   bias[[i]] = (promedios[[1]][[i]]/promedios[[2]][[i]])*100-100
 }
 
+dif = list()
+for(i in 1:4){
+  dif[[i]] = (promedios[[3]][[i]] - promedios[[1]][[i]])
+}
+
+
 ###########################################################################################################################################
 #  graficar. ggplot no alineado contorno con mapa. se debe a la resolucion??? buscar otros mapas
 #  graficar con las funciones de R. buscar para interpolar los valores. raster.
@@ -210,7 +216,7 @@ dev.off()
 
 
 # pasando a formato ggplot (data frame lon, lat, valores)
-prueba = bias[[1]]
+prueba = dif[[1]]*mask
 # ver escala, hay valores puntuales muy grandes --> si se puede, saturar escala en ggplot
 
 prueba_desarm = array(prueba, dim = 23*30)
@@ -231,7 +237,7 @@ for(j in 1:30){
 } 
 
 
-prueba_desarm[which(is.na(prueba_desarm))]=0
+#prueba_desarm[which(is.na(prueba_desarm))]
 
 prueba[,3]<-prueba_desarm
 
@@ -242,36 +248,16 @@ data(wrld_simpl)
 mymap <- fortify(wrld_simpl)
 anom[which(anom$lon>180),][,1]<-anom[which(anom$lon>180),][,1]-360  
 
+mapa <- map_data("world", regions = c("Brazil", "Uruguay", "Argentina", "French Guiana", "Suriname", "Colombia", "Venezuela",
+                                      "Bolivia", "Ecuador", "Chile", "Paraguay", "Peru", "Guyana", "Panama", "Costa Rica", "Nicaragua"), 
+                  colour = "black")
 
 
 
-#mapa <- get_map(location = c(left = -90, bottom = -58, right=-34, top = 12 ),urlonly = F, source = 'stamen', maptype = "toner", color = "bw",zoom=3)
+ggplot()+ theme_bw() + 
+  xlab("Longitud") + ylab("Latitud") + 
+  theme(panel.border = element_blank(), panel.grid.major = element_line(colour = "grey80"), panel.grid.minor = element_blank())+
+  geom_tile(data=anom,aes(x = lon, y= lat,fill = psi),alpha=1, na.rm = T)+
+  scale_fill_gradientn(limits=c(-100,100),name=expression("m/s"),colours=(brewer.pal(n=3,"RdBu")),na.value = NA)+
+   geom_polygon(data=mapa, aes(x=long,y=lat, group =group),fill = NA, color = "black") +coord_fixed(1.3)
 
-#library(metR) 
-#
-
-#world<- map_data("world")
-# ggplot(world, mapping = aes(x = long, y = lat) )+
-#   #geom_contour_fill(data = anom,aes(x = lon, y = lat, z = psi),alpha = 0.5)+
-#  geom_polygon() +
-#  coord_map(projection = "mercator") +
-#  coord_cartesian(xlim = c(-110, -30), ylim = c(-60, 35))+
-#   geom_contour_fill(data = anom,aes(x = lon, y = lat, z = psi),alpha = 0.5)
-
-
-
-
-
-#ggplot()+
-#ggmap(mapa, extent = "normal")+geom_contour_fill(data = anom,aes(x = lon, y = lat, z = psi),alpha = 0.5)+
-  #geom_map(data = mapa, map = mapa, aes(x = long, y = lat, map_id = id),fill = "grey", color = "black",lwd=0.5)
-  #geom_contour_fill(data = anom,aes(x = lon, y = lat, z = psi),alpha = 0.05)+
-  
-  #coord_map()
-  #scale_fill_gradientn(name=expression(Psi),limits=c(-100,100),colors = c("royalblue", "white", "red"),space = "Lab")
-  #scale_fill_viridis_c()+
-  #geom_contour2(data = anom, aes(x = lon, y = lat, z = psi), breaks = 0)+
-  #ggtitle(paste("EB2P2 dia", i, ".jpg", sep="")) + theme(plot.title = element_text(hjust=1)) +
-  #theme_bw()
-#titulo =paste("dia",i,".jpg", sep ="")
-#ggsave(titulo,V,width = 35,height = 15 ,units = "cm")
