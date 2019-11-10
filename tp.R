@@ -19,6 +19,7 @@ library(grid)
 library(gridExtra)
 library(akima)
 library(gganimate)
+library(RColorBrewer)
 
 #############################################################################################################
 
@@ -189,75 +190,34 @@ for(i in 1:4){
 bias = list()
 for(i in 1:4){
   bias[[i]] = (promedios[[1]][[i]]/promedios[[2]][[i]])*100-100
+  bias[[i]][which(!is.na(bias[[i]])&bias[[i]]>100)]=100
+  #bias[[i]][which(!is.na(bias[[i]])&bias[[i]]<(-100))]=-100     # no hace falta en ningun caso.
+  
 }
 
-dif = list()
+dif_1 = list()
 for(i in 1:4){
-  dif[[i]] = (promedios[[3]][[i]] - promedios[[1]][[i]])
+  dif_1[[i]] = (promedios[[3]][[i]] - promedios[[1]][[i]])
+  #dif_1[[i]] =(dif_1[[i]]/promedios[[1]][[i]])*100  #%
+  dif_1[[i]][which(!is.na(dif_1[[i]])&dif_1[[i]]>100)]=150
+  #dif_1[[i]][which(!is.na(dif_1[[i]])&dif_1[[i]]<(-100))]=-150
+}
+
+dif_2 = list()
+for(i in 1:4){
+  dif_2[[i]] = (promedios[[4]][[i]] - promedios[[1]][[i]])
+  dif_2[[i]][which(!is.na(dif_2[[i]])&dif_2[[i]]>100)]=150
+  #dif_2[[i]][which(!is.na(dif_2[[i]])&dif_2[[i]]<(-100))]=-150
+  
 }
 
 
 ###########################################################################################################################################
 #  graficar. ggplot no alineado contorno con mapa. se debe a la resolucion??? buscar otros mapas
 #  graficar con las funciones de R. buscar para interpolar los valores. raster.
+source("mapa.R")
+source("mapa2.R")
 
-
-
-prueba = bias[[1]]*mask
-#prueba = DJF_O[,, 95, 1]*mask # pese a que ya esta enmascarado al interpolar hay partes que no quedan bien. --> multiplicar por mask
-tiff(filename = "FIG_EJ_CLASE.tiff", res = 300, width=1500, height=1500,pointsize = 10)
-par(fig=c(0,1,0,1)) 
-image.plot(lon, lat, prueba, col=(tim.colors(100)), xlab="LONGITUD", ylab="LATITUD", main="probando") 
-contour(lon, lat, prueba, col="red", add=TRUE, levels=100, ltw=1.4)
-map(database="world2", add=TRUE, col="black", interior=TRUE) 
-dev.off()
-
-
-
-
-# pasando a formato ggplot (data frame lon, lat, valores)
-prueba = dif[[1]]*mask
-# ver escala, hay valores puntuales muy grandes --> si se puede, saturar escala en ggplot
-
-prueba_desarm = array(prueba, dim = 23*30)
-
-prueba = matrix(data = NA, nrow=23*30, ncol = 3)
-l=0
-while(l<23*30){
-  prueba[seq(l:l+23),1]<-lon
-  l=l+23
-}
-
-
-for(j in 1:30){
-  
-  lat_v = array(lat[j],dim=23)
-  
-  prueba[(23*j-22):(j*23),2]<-lat_v
-} 
-
-
-#prueba_desarm[which(is.na(prueba_desarm))]
-
-prueba[,3]<-prueba_desarm
-
-anom<-as.data.frame(prueba)
-
-colnames(anom)<-c("lon", "lat", "psi")
-data(wrld_simpl)
-mymap <- fortify(wrld_simpl)
-anom[which(anom$lon>180),][,1]<-anom[which(anom$lon>180),][,1]-360  
-
-mapa <- map_data("world", regions = c("Brazil", "Uruguay", "Argentina", "French Guiana", "Suriname", "Colombia", "Venezuela",
-                                      "Bolivia", "Ecuador", "Chile", "Paraguay", "Peru", "Guyana", "Panama", "Costa Rica", "Nicaragua"), 
-                  colour = "black")
-
-
-
-ggplot()+ theme_bw() + 
-  xlab("Longitud") + ylab("Latitud") + 
-  theme(panel.border = element_blank(), panel.grid.major = element_line(colour = "grey80"), panel.grid.minor = element_blank())+
-  geom_tile(data=anom,aes(x = lon, y= lat,fill = psi),alpha=1, na.rm = T)+
-  scale_fill_gradientn(limits=c(-100,100),name=expression("m/s"),colours=(brewer.pal(n=3,"RdBu")),na.value = NA)+
-   geom_polygon(data=mapa, aes(x=long,y=lat, group =group),fill = NA, color = "black") +coord_fixed(1.3)
-
+mapa(bias, "Bias 2005 - 1975","bias","%")
+mapa2(dif_1, "Período 2050-2020 respecto de 2005-1975", "dif1", "mm")
+mapa2(dif_2, "Período 2090-2060 respecto de 2005-1975", "dif2", "mm")
