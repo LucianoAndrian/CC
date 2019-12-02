@@ -133,7 +133,7 @@ for(j in 1:12){
 
 DJF = array(NA, dim = c(length(109:131), length(13:42) , 95, 3))
 
-DJF[,,,1] = rx5[,,,12]
+DJF[,,,1] = rx5[,,,12] #  CORREGIR!!! EL DICIEMBRE DE UN AÑO FORMA PARTE DEL DJF DE ESE MISMOS AÑO... SI SERAS PELOTUDOOO!!!
 DJF[,,,2:3] = rx5[,,,1:2]
 MAM = rx5[,,,3:5]
 JJA = rx5[,,,6:8]
