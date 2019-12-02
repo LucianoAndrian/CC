@@ -1,5 +1,15 @@
 mapa2 = function(lista, titulo1, nombre, label){
   
+  
+  library(maps)
+  require(fields)
+  require(mapdata)
+  library(ggplot2)
+  library(metR)
+  library(RColorBrewer)
+  library(mapproj)
+  
+  
   titulo = c("DJF", "MAM", "JJA", "SON")
   for(i in 1:4){
     value = array(lista[[i]]*mask, dim = 23*30)
@@ -30,12 +40,17 @@ mapa2 = function(lista, titulo1, nombre, label){
     g <- ggplot() + theme_minimal()+
       xlab("Longitud") + ylab("Latitud") + 
       theme(panel.border = element_blank(), panel.grid.major = element_line(colour = "grey"), panel.grid.minor = element_blank())+
-      geom_contour_fill(data=error,aes(x = lon, y= lat, z = rx5),alpha=1,na.fill=(-10000))+
-      #geom_tile(data=error,aes(x = lon, y= lat,fill = rx5),alpha=1, na.rm = T)+
+      
+      #geom_tile(data=error,aes(x = lon, y= lat,fill = rx5),alpha=1, na.rm = T)
+      
+      geom_contour_fill(data = error, aes(x = lon, y= lat, z = rx5), alpha = 1, na.fill= (-10000))+
+      
+      
       scale_fill_gradientn(limits=c(-150,150),name=label,colours=(brewer.pal(n=11,"Spectral")),na.value = "white")+
-      geom_polygon(data=mapa, aes(x=long,y=lat, group =group),fill = NA, color = "black") +coord_map("stereographic", orientation = c(-35, -56, 0))+
+      geom_polygon(data=mapa, aes(x=long,y=lat, group =group),fill = NA, color = "black") +#coord_map("stereographic", orientation = c(-35, -56, 0))+
       ggtitle(paste(titulo1, " - " , titulo[i], sep = ""))+
       scale_x_continuous(limits = c(-90, -30))+
+      scale_y_continuous(limits = c(-60, 15)) +
       theme(axis.text.y   = element_text(size=14), axis.text.x   = element_text(size=14), axis.title.y  = element_text(size=14),
             axis.title.x  = element_text(size=14), panel.grid.minor = element_blank(), axis.line = element_line(colour = "black"),
             panel.border = element_rect(colour = "black", fill=NA, size=3),
@@ -44,7 +59,18 @@ mapa2 = function(lista, titulo1, nombre, label){
     ggsave(paste("/home/auri/Facultad/Materias/Cambio_climatico/Tp_final/salidas/",nombre, "_", titulo[i], ".jpg",sep =""), plot = g, width = 15, height = 15  , units = "cm")
   }
   
-}  
+} 
+
+
+
+
+
+
+
+
+
+
+
   
   
   

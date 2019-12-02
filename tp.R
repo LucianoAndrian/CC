@@ -38,31 +38,27 @@ for( i in 1:12){
 
 # pensar manera menos chota de hacer esto
 
-DJF_O = array(NA, dim = c(length(109:131), length(13:42) , 110, 3))
-MAM_O = array(NA, dim = c(length(109:131), length(13:42) , 110, 3))
-JJA_O = array(NA, dim = c(length(109:131), length(13:42) , 110, 3))
-SON_O = array(NA, dim = c(length(109:131), length(13:42) , 110, 3))
+DJF_O = array(NA, dim = c(length(109:131), length(13:42) , 31, 3))
+MAM_O = array(NA, dim = c(length(109:131), length(13:42) , 31, 3))
+JJA_O = array(NA, dim = c(length(109:131), length(13:42) , 31, 3))
+SON_O = array(NA, dim = c(length(109:131), length(13:42) , 31, 3))
 
-DJF_O[,,,1] = OBS[[12]][109:131, 13:42,] 
-DJF_O[,,,2] = OBS[[1]][109:131, 13:42,] 
-DJF_O[,,,3] = OBS[[2]][109:131, 13:42,] 
+DJF_O[,,,1] = OBS[[12]][109:131, 13:42,74:104] 
+DJF_O[,,,2] = OBS[[1]][109:131, 13:42, 75:105] 
+DJF_O[,,,3] = OBS[[2]][109:131, 13:42, 75:105] 
 
-MAM_O[,,,1] = OBS[[3]][109:131, 13:42,]  
-MAM_O[,,,2] = OBS[[4]][109:131, 13:42,]  
-MAM_O[,,,3] = OBS[[5]][109:131, 13:42,]  
+MAM_O[,,,1] = OBS[[3]][109:131, 13:42, 75:105] 
+MAM_O[,,,2] = OBS[[4]][109:131, 13:42, 75:105] 
+MAM_O[,,,3] = OBS[[5]][109:131, 13:42, 75:105] 
 
-JJA_O[,,,1] = OBS[[6]][109:131, 13:42,]  
-JJA_O[,,,2] = OBS[[7]][109:131, 13:42,]  
-JJA_O[,,,3] = OBS[[8]][109:131, 13:42,]  
+JJA_O[,,,1] = OBS[[6]][109:131, 13:42, 75:105] 
+JJA_O[,,,2] = OBS[[7]][109:131, 13:42, 75:105] 
+JJA_O[,,,3] = OBS[[8]][109:131, 13:42, 75:105] 
 
-SON_O[,,,1] = OBS[[9]][109:131, 13:42,]  
-SON_O[,,,2] = OBS[[10]][109:131, 13:42,]  
-SON_O[,,,3] = OBS[[11]][109:131, 13:42,]  
+SON_O[,,,1] = OBS[[9]][109:131, 13:42, 75:105] 
+SON_O[,,,2] = OBS[[10]][109:131, 13:42, 75:105] 
+SON_O[,,,3] = OBS[[11]][109:131, 13:42, 75:105] 
 
-DJF_O = DJF_O[,, 75:105,]
-MAM_O = MAM_O[,, 75:105,]
-JJA_O = JJA_O[,, 75:105,]
-SON_O = SON_O[,, 75:105,]
 #############################################################################################################
 
 # historico del modelo
@@ -81,21 +77,14 @@ for(j in 1:12){
   }
 }
 
+DJF_h = array(NA, dim = c(length(109:131), length(13:42) , 31, 3))
 
+DJF_h[,,,1] = rx5_h[,, 125:155, 12]
+DJF_h[,,,2:3] = rx5_h[,, 126:156, 1:2]
 
-DJF_h = array(NA, dim = c(length(109:131), length(13:42) , 156, 3))
-
-DJF_h[,,,1] = rx5_h[,,,12]
-DJF_h[,,,2:3] = rx5_h[,,,1:2]
-
-MAM_h = rx5_h[,,,3:5]
-JJA_h = rx5_h[,,,6:8]
-SON_h = rx5_h[,,,9:11]
-
-DJF_h = DJF_h[,,126:156,] # ver bien los periodos... puede que esten corridos un año
-MAM_h = MAM_h[,,126:156,]
-JJA_h = JJA_h[,,126:156,]
-SON_h = SON_h[,,126:156,]
+MAM_h = rx5_h[,, 126:156, 3:5]
+JJA_h = rx5_h[,, 126:156, 6:8]
+SON_h = rx5_h[,, 126:156, 9:11]
 
 #############################################################################################################
 
@@ -131,20 +120,25 @@ for(j in 1:12){
   }
 }
 
-DJF = array(NA, dim = c(length(109:131), length(13:42) , 95, 3))
+DJF1 = array(NA, dim = c(length(109:131), length(13:42) , 31, 3))
+DJF2 = array(NA, dim = c(length(109:131), length(13:42) , 31, 3))
 
-DJF[,,,1] = rx5[,,,12] #  CORREGIR!!! EL DICIEMBRE DE UN AÑO FORMA PARTE DEL DJF DE ESE MISMOS AÑO... SI SERAS PELOTUDOOO!!!
-DJF[,,,2:3] = rx5[,,,1:2]
+DJF1[,,,1] = rx5[,,14:44,12] #  CORREGIR!!! EL DICIEMBRE DE UN AÑO FORMA PARTE DEL DJF DE ESE MISMOS AÑO... SI SERAS PELOTUDOOO!!!
+DJF1[,,,2:3] = rx5[,,14:44,1:2]
+
+DJF2[,,,1] = rx5[,,54:84,12]
+DJF2[,,,2:3] = rx5[,,54:84,1:2]
+
 MAM = rx5[,,,3:5]
 JJA = rx5[,,,6:8]
 SON = rx5[,,,9:11]
 #
-DJF_1 = DJF[,,15:45,]
+DJF_1 = DJF1
 MAM_1 = MAM[,,15:45,]
 JJA_1 = JJA[,,15:45,]
 SON_1 = SON[,,15:45,]
 
-DJF_2 = DJF[,,55:85,]
+DJF_2 = DJF2
 MAM_2 = MAM[,,55:85,]
 JJA_2 = JJA[,,55:85,]
 SON_2 = SON[,,55:85,]
